@@ -1,5 +1,11 @@
+@import url(./fonts/fonts.scss);
+@import url(./styles/text.scss);
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Open Sans Variation",
+    system-ui, sans-serif;
+  font-size: 18px;
+
   line-height: 1.5;
   font-weight: 400;
 
@@ -24,10 +30,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
