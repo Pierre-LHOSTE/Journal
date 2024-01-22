@@ -1,0 +1,10 @@
+[data-theme="light"] {
+  :root {
+    color-scheme: light;
+    background-color: #fff;
+  }
+  background-color: #fff;
+
+  @import "../components/header/header-light.scss";
+  @import "../components/modals/login/login-modal-light.scss";
+}

@@ -1,0 +1,65 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2em;
+  height: 3em;
+  align-items: center;
+
+  #header-title svg {
+    --size: 48px;
+    height: var(--size);
+    width: var(--size);
+  }
+
+  * {
+    align-items: center;
+  }
+
+  > div {
+    display: flex;
+    gap: 3em;
+
+    &:last-child {
+      gap: 1em;
+    }
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  ul {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 2em;
+
+    a {
+      font-size: 1em;
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  }
+
+  svg {
+    --size: 24px;
+    height: var(--size);
+    width: var(--size);
+    stroke: 1.5;
+  }
+
+  #sun {
+    stroke: #ddc71b;
+    fill: #ddc71b;
+    color: #ddc71b;
+    filter: drop-shadow(0 0 10px yellow);
+  }
+
+  #moon {
+    stroke: white;
+    fill: white;
+    color: white;
+    filter: drop-shadow(0 0 10px #ffffffb2)
+  }
+}

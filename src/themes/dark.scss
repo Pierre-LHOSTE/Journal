@@ -1,0 +1,10 @@
+[data-theme="dark"] {
+  :root {
+    color-scheme: dark;
+  }
+  background-color: #1a1d23;
+  background-color: #000;
+
+  @import "../components/header/header-dark.scss";
+  @import "../components/modals/login/login-modal-dark.scss";
+}

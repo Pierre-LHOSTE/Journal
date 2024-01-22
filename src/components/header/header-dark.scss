@@ -1,0 +1,20 @@
+header {
+  ul {
+    a {
+      color: rgba(255, 255, 255, 0.5);
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      &.active {
+        color: rgba(255, 255, 255, 1);
+      }
+    }
+  }
+
+  svg {
+    fill: white;
+    stroke: white;
+  }
+}
