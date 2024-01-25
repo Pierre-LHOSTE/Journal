@@ -2,119 +2,187 @@ import { Button, Form, Input, Select, Space } from "antd";
 import { useCreateArticleMutation } from "../../reducers/adminApi";
 import { articleType } from "../../types/article";
 import getSlug from "speakingurl";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { openNotification } from "../../reducers/NotificationSlice";
 
 function EditArticlePage() {
+  const dispatch = useAppDispatch();
   const [form] = Form.useForm();
-  const [createArticle] = useCreateArticleMutation();
+  const [createArticle, { isLoading, isError, isSuccess, error }] =
+    useCreateArticleMutation();
+  const [urls, setUrls] = useState<string[]>([""]);
+  const isLogged = useAppSelector((state) => state.auth.isLogged);
+
+  function updateMainUrl(e: { target: { value: string } }) {
+    const mainUrl = slugify(e.target.value);
+    setUrls((url) => {
+      if (url.length <= 0) return [mainUrl];
+      return url.map((u, i) => (i === 0 ? mainUrl : u));
+    });
+    form.setFieldValue("urls", urls);
+  }
+
+  function updateUrls(array: string[]) {
+    const newUrls = array.map((el) => slugify(el));
+    setUrls(newUrls);
+  }
 
   const onFinish = (values: articleType) => {
-    const url = getSlug(values.name, {
-      lang: "fr",
-    });
-    createArticle({ ...values, url: url });
+    createArticle({ ...values });
   };
 
+  function slugify(text: string) {
+    return getSlug(text, {
+      lang: "fr",
+    });
+  }
+
+  useEffect(() => {
+    form.setFieldValue("urls", urls);
+  }, [urls]);
+
+  useEffect(() => {
+    if (!isLoading) return;
+    dispatch(
+      openNotification({
+        title: "Chargement",
+        type: "loading",
+      })
+    );
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!isSuccess) return;
+    dispatch(
+      openNotification({
+        title: "Article créé",
+        type: "success",
+      })
+    );
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (!isError || !error) return;
+    let errorMessage;
+    if (!("data" in error && error.data)) {
+      errorMessage = "Error login";
+    } else {
+      errorMessage = (error.data as { error: string }).error;
+    }
+    dispatch(
+      openNotification({
+        title: "Erreur",
+        type: "error",
+        description: errorMessage,
+        detailed: true,
+      })
+    );
+  }, [isError]);
+
   return (
-    <div>
-      Edit
-      <Form
-        layout="vertical"
-        form={form}
-        name="control-hooks"
-        onFinish={onFinish}
-        style={{ maxWidth: 600 }}
-      >
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[{ required: true }]}
-          initialValue={"name"}
-        >
-          <Input size="large" />
-        </Form.Item>
-        <Form.Item
-          name="data"
-          label="Data"
-          rules={[{ required: true }]}
-          initialValue={"data"}
-        >
-          <Input.TextArea />
-        </Form.Item>
-        <Form.Item
-          name="author"
-          label="Author"
-          rules={[{ required: true }]}
-          initialValue={"author"}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          style={{
-            marginBottom: 0,
-          }}
-        >
-          <Form.Item
-            name="category"
-            label="Category"
-            rules={[{ required: true }]}
-            style={{
-              display: "inline-block",
-            }}
-            initialValue={"category"}
+    <>
+      {isLogged ? (
+        <div>
+          Edit
+          <Form
+            layout="vertical"
+            form={form}
+            name="control-hooks"
+            onFinish={onFinish}
+            style={{ maxWidth: 600 }}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="tags"
-            label="Tags"
-            rules={[{ required: true }]}
-            style={{
-              display: "inline-block",
-            }}
-            initialValue={["tags"]}
-          >
-            <Select mode="tags" />
-          </Form.Item>
-        </Form.Item>
+            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+              <Input size="large" onChange={updateMainUrl} />
+            </Form.Item>
+            <Form.Item name="data" label="Data" rules={[{ required: true }]}>
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item
+              name="author"
+              label="Author"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              style={{
+                marginBottom: 0,
+              }}
+            >
+              <Form.Item
+                name="category"
+                label="Category"
+                rules={[{ required: true }]}
+                style={{
+                  display: "inline-block",
+                }}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="tags"
+                label="Tags"
+                rules={[{ required: true }]}
+                style={{
+                  display: "inline-block",
+                }}
+              >
+                <Select mode="tags" />
+              </Form.Item>
+            </Form.Item>
 
-        <Form.Item
-          style={{
-            marginBottom: 0,
-          }}
-        >
-          <Form.Item
-            name="image"
-            label="Image"
-            rules={[{ required: true }]}
-            style={{
-              display: "inline-block",
-            }}
-            initialValue={"image"}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="color"
-            label="Color"
-            rules={[{ required: true }]}
-            style={{
-              display: "inline-block",
-            }}
-            initialValue={"color"}
-          >
-            <Input />
-          </Form.Item>
-        </Form.Item>
+            <Form.Item
+              style={{
+                marginBottom: 0,
+              }}
+            >
+              <Form.Item
+                name="image"
+                label="Image"
+                rules={[{ required: true }]}
+                style={{
+                  display: "inline-block",
+                }}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="color"
+                label="Color"
+                rules={[{ required: true }]}
+                style={{
+                  display: "inline-block",
+                }}
+              >
+                <Input />
+              </Form.Item>
+            </Form.Item>
 
-        <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Space>
-        </Form.Item>
-      </Form>
-    </div>
+            <Form.Item name="urls" label="URLs" rules={[{ required: true }]}>
+              <Select mode="tags" onChange={updateUrls} />
+            </Form.Item>
+
+            <Form.Item>
+              <Space>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        </div>
+      ) : (
+        <>No connected</>
+      )}
+    </>
   );
 }
 

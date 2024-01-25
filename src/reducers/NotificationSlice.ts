@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { NotificationType } from "../types/notification";
 
 export const NotificationSlice = createSlice({
   name: "notification",
@@ -6,19 +7,26 @@ export const NotificationSlice = createSlice({
     notification: {
       title: "",
       description: "",
-      type: "",
+      type: "info",
       duration: 4.5,
-    },
+      detailed: false,
+    } as NotificationType,
     notificationCount: 0,
+    isLoading: false,
   },
   reducers: {
-    openNotification: (state, action) => {
+    openNotification: (state, { payload }: { payload: NotificationType }) => {
       const notification = {
-        title: action.payload.title,
-        description: action.payload.description,
-        type: action.payload.type || "open",
-        duration: action.payload.duration || 4.5,
-      };
+        title: payload.title || "Title",
+        description: payload.detailed ? payload.description : "",
+        type: payload.type,
+        duration: payload.duration || 2,
+        detailed: payload.detailed || false,
+      } as NotificationType;
+
+      const isLoading = notification.type === "loading" ? true : false;
+      
+      state.isLoading = isLoading;
       state.notification = notification;
       state.notificationCount = state.notificationCount + 1;
     },

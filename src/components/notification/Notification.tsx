@@ -1,30 +1,55 @@
 import { useAppSelector } from "../../store";
-import { notification } from "antd";
-import { NotificationType } from "../../types/notification";
+import { message, notification } from "antd";
 import { useEffect } from "react";
+import { NotificationType } from "../../types/notification";
 
 function Notification() {
-  const [api, contextHolder] = notification.useNotification();
-  const notificationData = useAppSelector(
+  const [notificationApi, contextHolderNotification] =
+    notification.useNotification();
+  const [messageApi, contextHolderMessage] = message.useMessage();
+  const notificationData = useAppSelector<NotificationType>(
     (state) => state.notification.notification
   );
   const notificationCount = useAppSelector(
     (state) => state.notification.notificationCount
   );
+  const isLoading = useAppSelector((state) => state.notification.isLoading);
 
   useEffect(() => {
-    const { title, description, duration } = notificationData;
-    const type = (notificationData.type || "open") as NotificationType;
+    const { title, detailed, type } = notificationData;
+    const description = detailed ? notificationData.description : "";
+    const duration = type === "loading" ? 0 : notificationData.duration;
+
     if (notificationCount <= 0) return;
 
-    api[type as NotificationType]({
-      message: title,
-      description: description,
-      duration: duration,
-    });
+    if (detailed) {
+      notificationApi[type]({
+        message: title,
+        description: description,
+        duration: duration,
+      });
+    } else {
+      messageApi.open({
+        type: type,
+        content: title,
+        duration: duration,
+        key: type,
+      });
+    }
   }, [notificationCount]);
 
-  return <>{contextHolder}</>;
+  useEffect(() => {
+    if (!isLoading) {
+      messageApi.destroy("loading");
+    }
+  }, [isLoading]);
+
+  return (
+    <>
+      {contextHolderNotification}
+      {contextHolderMessage}
+    </>
+  );
 }
 
 export default Notification;

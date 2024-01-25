@@ -1,6 +1,6 @@
 import { Button, Form, Input, Modal } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../store";
-import { closeLogin, setLogged } from "../../../reducers/settingsSlice";
+import { closeLogin } from "../../../reducers/settingsSlice";
 import NameIcon from "./icons/NameIcon";
 import "./login-modal.scss";
 import PasswordIcon from "./icons/PasswordIcon";
@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 import { openNotification } from "../../../reducers/NotificationSlice";
 import { useCookies } from "react-cookie";
-import { setToken } from "../../../reducers/authSlice";
+import { login as loginSlice, logout } from "../../../reducers/authSlice";
 
 function LoginModal() {
   const [form] = Form.useForm();
@@ -20,7 +20,35 @@ function LoginModal() {
     login,
     { data: loginResult, error: loginError, isLoading: loginLoading },
   ] = useLoginMutation();
-  const [, setCookie] = useCookies(["token"]);
+  const [, setCookie, removeCookie] = useCookies(["token", "refreshToken"]);
+
+  function successLogout() {
+    dispatch(logout());
+    removeCookie("token");
+    removeCookie("refreshToken");
+  }
+
+  function successLogin({
+    accessToken,
+    refreshToken,
+    isCookies = false,
+  }: {
+    accessToken?: string;
+    refreshToken?: string;
+    isCookies?: boolean;
+  }) {
+    dispatch(loginSlice({ accessToken, refreshToken }));
+    if (!isCookies) {
+      setCookie("token", accessToken, {
+        secure: true,
+        path: "/",
+      });
+      setCookie("refreshToken", refreshToken, {
+        secure: true,
+        path: "/",
+      });
+    }
+  }
 
   function handleOk() {
     form.submit();
@@ -40,7 +68,6 @@ function LoginModal() {
     if (loginResult && loginResult.access_token) {
       form.resetFields();
       handleCancel();
-      dispatch(setLogged(true));
       dispatch(
         openNotification({
           title: "Connecté",
@@ -48,10 +75,8 @@ function LoginModal() {
           description: loginResult.user_id,
         })
       );
-      setCookie("token", loginResult.access_token, {
-        secure: true,
-      });
-      dispatch(setToken(loginResult.access_token));
+      const { access_token, refresh_token } = loginResult;
+      successLogin({ accessToken: access_token, refreshToken: refresh_token });
     }
   }, [loginResult]);
 
@@ -70,6 +95,7 @@ function LoginModal() {
         description: errorMessage,
       })
     );
+    successLogout();
   }, [dispatch, loginError]);
 
   return (

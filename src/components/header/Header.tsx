@@ -1,16 +1,13 @@
 import { Button } from "antd";
 import { NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store";
-import {
-  openLogin,
-  setLogged,
-  toggleTheme,
-} from "../../reducers/settingsSlice";
+import { openLogin, toggleTheme } from "../../reducers/settingsSlice";
 import IconMoon from "./icons/MoonIcon";
 import IconSun from "./icons/SunIcon";
 import LogoIcon from "./icons/logoIcon";
 import SearchIcon from "./icons/SearchIcon";
 import { useCookies } from "react-cookie";
+import { deleteTokens, setLogged } from "../../reducers/authSlice";
 
 const iconSize = 24;
 const iconStroke = 1.5;
@@ -18,7 +15,7 @@ const iconStroke = 1.5;
 function Header() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector((state) => state.settings.theme);
-  const isLogged = useAppSelector((state) => state.settings.isLogged);
+  const isLogged = useAppSelector((state) => state.auth.isLogged);
   const [, , removeCookies] = useCookies(["token"]);
 
   function switchTheme() {
@@ -31,6 +28,7 @@ function Header() {
 
   function logout() {
     removeCookies("token");
+    dispatch(deleteTokens());
     dispatch(setLogged(false));
   }
 

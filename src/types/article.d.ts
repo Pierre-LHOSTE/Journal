@@ -6,7 +6,7 @@ export interface articleType {
   tags: string[];
   image: string;
   color: string;
-  url: string
+  urls: string[];
 }
 
 export interface articleFullType extends articleType {

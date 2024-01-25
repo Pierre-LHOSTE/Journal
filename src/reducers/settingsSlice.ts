@@ -4,8 +4,7 @@ export const settingsSlice = createSlice({
   name: "settings",
   initialState: {
     theme: "dark",
-    loginModal: false,
-    isLogged: false,
+    loginModal: false
   },
   reducers: {
     toggleTheme: (state) => {
@@ -26,13 +25,10 @@ export const settingsSlice = createSlice({
     closeLogin: (state) => {
       state.loginModal = false;
     },
-    setLogged: (state, action) => {
-      state.isLogged = action.payload;
-    },
   },
 });
 
-export const { toggleTheme, setTheme, openLogin, closeLogin, setLogged } =
+export const { toggleTheme, setTheme, openLogin, closeLogin } =
   settingsSlice.actions;
 
 export default settingsSlice.reducer;

@@ -2,7 +2,7 @@ import { useAppSelector } from "../../store";
 import { Link } from "react-router-dom";
 
 function DashboardPage() {
-  const isLogged = useAppSelector((state) => state.settings.isLogged);
+  const isLogged = useAppSelector((state) => state.auth.isLogged);
 
   return (
     <div>

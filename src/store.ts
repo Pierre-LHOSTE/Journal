@@ -14,7 +14,7 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  blacklist: ["auth", "authApi", "articleApi", "adminApi", "notification"],
+  whitelist: ["settings", "article"],
 };
 
 const reducer = combineReducers({
@@ -32,11 +32,9 @@ const persistedReducer = persistReducer(persistConfig, reducer);
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(
-      authApi.middleware,
-      articleApi.middleware,
-      adminApi.middleware
-    );
+    return getDefaultMiddleware({
+      serializableCheck: false,
+    }).concat(authApi.middleware, articleApi.middleware, adminApi.middleware);
   },
 });
 

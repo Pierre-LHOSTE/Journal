@@ -29,17 +29,7 @@ export const authApi = createApi({
       }),
       invalidatesTags: ["login"],
     }),
-    checkToken: builder.mutation({
-      query: (token) => ({
-        url: "https://westeurope.azure.data.mongodb-api.com/app/application-0-owulp/endpoint/check",
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      invalidatesTags: ["login"],
-    }),
   }),
 });
 
-export const { useLoginMutation, useRefreshTokenMutation, useCheckTokenMutation } = authApi;
+export const { useLoginMutation, useRefreshTokenMutation } = authApi;
