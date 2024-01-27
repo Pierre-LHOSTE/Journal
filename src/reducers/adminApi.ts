@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { articleType } from "../types/article";
+import { ArticleType } from "../types/article";
 import { RootState } from "../store";
 import { isTokenExpired, refreshTokenApi } from "./functions";
 
@@ -28,7 +28,7 @@ export const adminApi = createApi({
   tagTypes: ["articles"],
   endpoints: (builder) => ({
     createArticle: builder.mutation({
-      query: (article: articleType) => ({
+      query: (article: ArticleType) => ({
         url: "article",
         method: "POST",
         body: article,

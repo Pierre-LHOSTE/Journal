@@ -31,3 +31,14 @@ async function refreshTokenApi(refreshToken: string) {
 }
 
 export { refreshTokenApi };
+
+export function getErrorMessage(error: object) {
+  let errorMessage;
+  if (!error) return "";
+  if (!("data" in error && error.data)) {
+    errorMessage = "Error";
+  } else {
+    errorMessage = (error.data as { error: string }).error;
+  }
+  return errorMessage;
+}

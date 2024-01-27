@@ -13,7 +13,19 @@ import { useCookies } from "react-cookie";
 import DashboardPage from "./pages/admin/DashboardPage";
 import EditArticlePage from "./pages/admin/EditArticlePage";
 import { login, logout, setLogged } from "./reducers/authSlice";
-import { isTokenExpired, refreshTokenApi } from "./reducers/functions";
+import {
+  getErrorMessage,
+  isTokenExpired,
+  refreshTokenApi,
+} from "./reducers/functions";
+import {
+  useGetArticlesMutation,
+  useGetVersionsQuery,
+} from "./reducers/articleApi";
+import { openNotification } from "./reducers/NotificationSlice";
+import { setArticles } from "./reducers/articleSlice";
+import { VersionsType } from "./types/version";
+import { ArticleFullType } from "./types/article";
 
 const router = createBrowserRouter([
   {
@@ -45,12 +57,60 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const theme = useAppSelector((state) => state.settings.theme);
   const dispatch = useAppDispatch();
+  const theme = useAppSelector((state) => state.settings.theme);
+  const articles = useAppSelector<ArticleFullType[]>((state) => state.article.articles);
   const [cookies, setCookie, removeCookie] = useCookies([
     "token",
     "refreshToken",
   ]);
+
+  const [
+    getArticles,
+    {
+      isError: isErrorArticles,
+      error: errorArticles,
+      data: newArticles,
+      isSuccess: isSuccessArticles,
+    },
+  ] = useGetArticlesMutation();
+  const {
+    data: versions,
+    isError: isErrorVersions,
+    error: errorVersions,
+    isSuccess: successVersions,
+  } = useGetVersionsQuery();
+
+  useEffect(() => {
+    if (!isErrorVersions) return;
+    const errorMessage = getErrorMessage(errorVersions as object);
+    dispatch(
+      openNotification({
+        title: "Error",
+        type: "error",
+        description: errorMessage,
+        detailed: true,
+      })
+    );
+  }, [isErrorVersions]);
+
+  useEffect(() => {
+    if (!isErrorArticles) return;
+    const errorMessage = getErrorMessage(errorArticles as object);
+    dispatch(
+      openNotification({
+        title: "Error",
+        type: "error",
+        description: errorMessage,
+        detailed: true,
+      })
+    );
+  }, [isErrorArticles]);
+
+  useEffect(() => {
+    if (!isSuccessArticles) return;
+    dispatch(setArticles(newArticles));
+  }, [isSuccessArticles]);
 
   function successLogout() {
     dispatch(logout());
@@ -110,9 +170,35 @@ function App() {
   }
 
   useEffect(() => {
+    if (successVersions) {
+      const newVersion = versions.reduce(
+        (acc: VersionsType, version: VersionsType) => {
+          return { refreshCount: version.refreshCount + acc.refreshCount };
+        },
+        { refreshCount: 0 }
+      ).refreshCount;
+      const actualVersion = articles.reduce(
+        (acc: VersionsType, version: VersionsType) => {
+          return { refreshCount: version.refreshCount + acc.refreshCount };
+        },
+        { refreshCount: 0 }
+      ).refreshCount;
+      if (newVersion > actualVersion) {
+        getArticles();
+      }
+    }
+  }, [successVersions]);
+
+  useEffect(() => {
     dispatch(setTheme(theme));
     checkToken();
   }, []);
+
+  // useEffect(() => {
+  //   console.log("Articles changed");
+  //   console.log(articles);
+  //   console.log(articles.map((a) => a.refreshCount));
+  // }, [articles]);
 
   const selectedAntdTheme =
     theme === "dark"

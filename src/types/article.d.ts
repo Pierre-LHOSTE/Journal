@@ -1,4 +1,4 @@
-export interface articleType {
+export interface ArticleType {
   name: string;
   data: string;
   author: string;
@@ -7,11 +7,14 @@ export interface articleType {
   image: string;
   color: string;
   urls: string[];
+  description: string;
 }
 
-export interface articleFullType extends articleType {
-  createdAt: number;
-  updatedAt: number;
+export interface ArticleFullType extends ArticleType {
+  date: {
+    createdAt: number;
+    updatedAt: number;
+  };
   refreshCount: number;
   _id: string;
 }
