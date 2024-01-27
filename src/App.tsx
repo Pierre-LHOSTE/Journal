@@ -1,31 +1,31 @@
-import Header from "./components/header/Header";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import ArticlesPage from "./pages/ArticlesPage";
-import AboutPage from "./pages/AboutPage";
 import { ConfigProvider, theme as antdTheme } from "antd";
-import { useAppDispatch, useAppSelector } from "./store";
-import LoginModal from "./components/modals/login/LoginModal";
 import { useEffect } from "react";
-import { setTheme } from "./reducers/settingsSlice";
-import Notification from "./components/notification/Notification";
 import { useCookies } from "react-cookie";
+import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
+import Header from "./components/header/Header";
+import LoginModal from "./components/modals/login/LoginModal";
+import Notification from "./components/notification/Notification";
+import AboutPage from "./pages/AboutPage";
+import ArticlesPage from "./pages/ArticlesPage";
+import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import EditArticlePage from "./pages/admin/EditArticlePage";
+import { openNotification } from "./reducers/NotificationSlice";
+import {
+  useGetArticlesMutation,
+  useGetVersionsQuery,
+} from "./reducers/articleApi";
+import { setArticles } from "./reducers/articleSlice";
 import { login, logout, setLogged } from "./reducers/authSlice";
 import {
   getErrorMessage,
   isTokenExpired,
   refreshTokenApi,
 } from "./reducers/functions";
-import {
-  useGetArticlesMutation,
-  useGetVersionsQuery,
-} from "./reducers/articleApi";
-import { openNotification } from "./reducers/NotificationSlice";
-import { setArticles } from "./reducers/articleSlice";
-import { VersionsType } from "./types/version";
+import { setTheme } from "./reducers/settingsSlice";
+import { useAppDispatch, useAppSelector } from "./store";
 import { ArticleFullType } from "./types/article";
+import { VersionsType } from "./types/version";
 
 const router = createBrowserRouter([
   {
@@ -59,7 +59,9 @@ const router = createBrowserRouter([
 function App() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector((state) => state.settings.theme);
-  const articles = useAppSelector<ArticleFullType[]>((state) => state.article.articles);
+  const articles = useAppSelector<ArticleFullType[]>(
+    (state) => state.article.articles
+  );
   const [cookies, setCookie, removeCookie] = useCookies([
     "token",
     "refreshToken",

@@ -13,7 +13,7 @@ function ArticleCard({
   const navigate = useNavigate();
 
   const lastDate = new Date(
-    date[date.updatedAt ? "updatedAt" : "createdAt"]
+    date.updatedAt ? date.updatedAt : date.createdAt
   ).toLocaleDateString("fr-FR", {
     year: "numeric",
     month: "long",
