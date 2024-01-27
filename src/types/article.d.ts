@@ -1,6 +1,6 @@
 export interface ArticleType {
   name: string;
-  data: string;
+  data?: string;
   author: string;
   category: string;
   tags: string[];
@@ -13,7 +13,7 @@ export interface ArticleType {
 export interface ArticleFullType extends ArticleType {
   date: {
     createdAt: number;
-    updatedAt: number;
+    updatedAt?: number;
   };
   refreshCount: number;
   _id: string;
