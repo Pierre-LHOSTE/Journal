@@ -1,6 +1,6 @@
-import { useAppSelector } from "../../store";
 import { message, notification } from "antd";
 import { useEffect } from "react";
+import { useAppSelector } from "../../store";
 import { NotificationType } from "../../types/notification";
 
 function Notification() {

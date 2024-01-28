@@ -25,7 +25,7 @@ export const NotificationSlice = createSlice({
       } as NotificationType;
 
       const isLoading = notification.type === "loading" ? true : false;
-      
+
       state.isLoading = isLoading;
       state.notification = notification;
       state.notificationCount = state.notificationCount + 1;

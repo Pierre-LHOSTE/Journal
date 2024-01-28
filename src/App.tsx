@@ -1,15 +1,7 @@
 import { ConfigProvider, theme as antdTheme } from "antd";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
-import Header from "./components/header/Header";
-import LoginModal from "./components/modals/login/LoginModal";
-import Notification from "./components/notification/Notification";
-import AboutPage from "./pages/AboutPage";
-import ArticlesPage from "./pages/ArticlesPage";
-import HomePage from "./pages/HomePage";
-import DashboardPage from "./pages/admin/DashboardPage";
-import EditArticlePage from "./pages/admin/EditArticlePage";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { openNotification } from "./reducers/NotificationSlice";
 import {
   useGetArticlesMutation,
@@ -23,38 +15,12 @@ import {
   refreshTokenApi,
 } from "./reducers/functions";
 import { setTheme } from "./reducers/settingsSlice";
+import { routes } from "./routes";
 import { useAppDispatch, useAppSelector } from "./store";
 import { ArticleFullType } from "./types/article";
 import { VersionsType } from "./types/version";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: "articles",
-        element: <ArticlesPage />,
-      },
-      {
-        path: "about",
-        element: <AboutPage />,
-      },
-      {
-        path: "dashboard",
-        element: <DashboardPage />,
-      },
-      {
-        path: "dashboard/new",
-        element: <EditArticlePage />,
-      },
-    ],
-  },
-]);
+const router = createBrowserRouter(routes);
 
 function App() {
   const dispatch = useAppDispatch();
@@ -76,6 +42,7 @@ function App() {
       isSuccess: isSuccessArticles,
     },
   ] = useGetArticlesMutation();
+
   const {
     data: versions,
     isError: isErrorVersions,
@@ -115,6 +82,7 @@ function App() {
   }, [isSuccessArticles]);
 
   function successLogout() {
+    dispatch(openNotification({ title: "Déconnecté", type: "warning" }));
     dispatch(logout());
     removeCookie("token");
     removeCookie("refreshToken");
@@ -129,6 +97,7 @@ function App() {
     refreshToken?: string;
     isCookies?: boolean;
   }) {
+    dispatch(openNotification({ title: "Connecté", type: "success" }));
     dispatch(login({ accessToken, refreshToken }));
     if (!isCookies) {
       setCookie("token", accessToken, {
@@ -145,23 +114,33 @@ function App() {
   async function checkToken() {
     const token = cookies.token;
     const refreshToken = cookies.refreshToken;
-
+    console.log("Checking token...");
     if (!token || !refreshToken) {
+      console.log("Token or refresh token not found. User is not logged in.");
       setLogged(false);
     } else {
+      console.log("Token and refresh token found. Verifying tokens...");
       if (isTokenExpired(refreshToken)) {
+        console.log("Refresh token expired. Logging out...");
         successLogout();
         return;
       }
       if (isTokenExpired(token)) {
+        console.log("Access token expired. Refreshing token...");
         const newToken = await refreshTokenApi(refreshToken);
-        if (!newToken) {
+        if (newToken) {
+          console.log("Token refreshed successfully. Logging in...");
+          successLogin({
+            accessToken: newToken,
+            refreshToken: refreshToken,
+          });
+        } else {
+          console.log("Failed to refresh token. Logging out...");
           successLogout();
           return;
-        } else {
-          successLogin({ accessToken: newToken, refreshToken: refreshToken });
         }
       } else {
+        console.log("Tokens are valid. User is logged in.");
         successLogin({
           accessToken: token,
           refreshToken: refreshToken,
@@ -185,7 +164,7 @@ function App() {
         },
         { refreshCount: 0 }
       ).refreshCount;
-      if (newVersion > actualVersion) {
+      if (newVersion !== actualVersion) {
         getArticles();
       }
     }
@@ -196,11 +175,10 @@ function App() {
     checkToken();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Articles changed");
-  //   console.log(articles);
-  //   console.log(articles.map((a) => a.refreshCount));
-  // }, [articles]);
+  useEffect(() => {
+    console.log("Articles changed");
+    console.log(articles);
+  }, [articles]);
 
   const selectedAntdTheme =
     theme === "dark"
@@ -216,20 +194,6 @@ function App() {
       <ConfigProvider theme={selectedAntdTheme}>
         <RouterProvider router={router} />
       </ConfigProvider>
-    </>
-  );
-}
-
-function Layout() {
-  return (
-    <>
-      <Header />
-      <main>
-        <LoginModal />
-        <Notification />
-        <Outlet />
-      </main>
-      <footer></footer>
     </>
   );
 }

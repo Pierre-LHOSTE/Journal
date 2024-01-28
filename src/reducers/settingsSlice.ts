@@ -4,14 +4,13 @@ export const settingsSlice = createSlice({
   name: "settings",
   initialState: {
     theme: "dark",
-    loginModal: false
+    loginModal: false,
   },
   reducers: {
     toggleTheme: (state) => {
       state.theme = state.theme === "dark" ? "light" : "dark";
       document.body.setAttribute("data-theme", state.theme);
       document.documentElement.setAttribute("color-scheme", state.theme);
-      localStorage.setItem("theme", state.theme);
     },
     setTheme: (state, action) => {
       const theme = action.payload;

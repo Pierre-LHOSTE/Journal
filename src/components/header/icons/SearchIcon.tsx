@@ -1,4 +1,3 @@
-
 function SearchIcon({ size, stroke }: { size: number; stroke: number }) {
   return (
     <svg

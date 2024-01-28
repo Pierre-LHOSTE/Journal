@@ -1,14 +1,14 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import settingsSlice from "./reducers/settingsSlice";
-import { authApi } from "./reducers/authApi";
-import NotificationSlice from "./reducers/NotificationSlice";
-import { articleApi } from "./reducers/articleApi";
-import authSlice from "./reducers/authSlice";
-import { adminApi } from "./reducers/adminApi";
-import articleSlice from "./reducers/articleSlice";
-import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import NotificationSlice from "./reducers/NotificationSlice";
+import { adminApi } from "./reducers/adminApi";
+import { articleApi } from "./reducers/articleApi";
+import articleSlice from "./reducers/articleSlice";
+import { authApi } from "./reducers/authApi";
+import authSlice from "./reducers/authSlice";
+import settingsSlice from "./reducers/settingsSlice";
 
 const persistConfig = {
   key: "root",

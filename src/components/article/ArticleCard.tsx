@@ -1,13 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { List, Tag } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import { ArticleFullType } from "../../types/article";
+import Thumbnail from "./thumbnail/Thumbnail";
 
-function ArticleCard({
-  article,
-  theme,
-}: {
-  article: ArticleFullType;
-  theme: string;
-}) {
+function ArticleCard({ article }: { article: ArticleFullType; theme: string }) {
   const { name, category, author, date, image, urls, color, description } =
     article;
   const navigate = useNavigate();
@@ -23,34 +19,34 @@ function ArticleCard({
     ? `Mis à jour le ${lastDate}`
     : `Créé le ${lastDate}`;
 
-  const gradientColor =
-    theme === "light"
-      ? `linear-gradient(to top right,${color}, white 150%)`
-      : `linear-gradient(to top right, ${color}, black 150%)`;
+  const categoryTag = <Tag bordered={false}>{category}</Tag>;
+
+  const details = (
+    <>
+      {categoryTag} {displayDate}
+    </>
+  );
 
   const navigateToUrl = () => {
-    return;
+    // return;
     navigate(urls[0]);
   };
 
   return (
-    <article onClick={navigateToUrl}>
-      <div className="image" style={{ background: `${gradientColor}` }}>
-        <img src={image} />
-      </div>
-      <div className="content">
-        <div>
-          <span>{category.toUpperCase()}</span>
-          <h2>{name}</h2>
-          <p>{description}</p>
-        </div>
-        <div>
-          <span>
-            {author} - {displayDate}
-          </span>
-        </div>
-      </div>
-    </article>
+    <List.Item
+      className="article"
+      extra={
+        <Link to={urls[0]}>
+          <Thumbnail color={color} image={image} />
+        </Link>
+      }
+    >
+      <List.Item.Meta
+        title={<Link to={urls[0]}>{name}</Link>}
+        description={details}
+      />
+      {description}
+    </List.Item>
   );
 }
 

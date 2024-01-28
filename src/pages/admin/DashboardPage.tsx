@@ -1,5 +1,5 @@
-import { useAppSelector } from "../../store";
 import { Link } from "react-router-dom";
+import { useAppSelector } from "../../store";
 
 function DashboardPage() {
   const isLogged = useAppSelector((state) => state.auth.isLogged);
@@ -8,9 +8,9 @@ function DashboardPage() {
     <div>
       {isLogged ? (
         <>
-          Dashboard
+          <Link to={"./articles"}>Articles</Link>
           <br />
-          <Link to={"./new"}>Add new</Link>
+          <Link to={"./authors"}>Auteurs</Link>
         </>
       ) : (
         <>No connected</>

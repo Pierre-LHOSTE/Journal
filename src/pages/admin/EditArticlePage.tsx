@@ -1,10 +1,10 @@
 import { Button, Form, Input, Select, Space } from "antd";
-import { useCreateArticleMutation } from "../../reducers/adminApi";
-import { articleType } from "../../types/article";
-import getSlug from "speakingurl";
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store";
+import getSlug from "speakingurl";
 import { openNotification } from "../../reducers/NotificationSlice";
+import { useCreateArticleMutation } from "../../reducers/adminApi";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { ArticleType } from "../../types/article";
 
 function EditArticlePage() {
   const dispatch = useAppDispatch();
@@ -28,7 +28,7 @@ function EditArticlePage() {
     setUrls(newUrls);
   }
 
-  const onFinish = (values: articleType) => {
+  const onFinish = (values: ArticleType) => {
     createArticle({ ...values });
   };
 

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ArticleType } from "../types/article";
 import { RootState } from "../store";
+import { ArticleType } from "../types/article";
 import { isTokenExpired, refreshTokenApi } from "./functions";
 
 export const adminApi = createApi({

@@ -1,3 +1,4 @@
+import { List } from "antd";
 import ArticleCard from "../components/article/ArticleCard";
 import { useAppSelector } from "../store";
 import { ArticleFullType } from "../types/article";
@@ -11,11 +12,13 @@ function ArticlesPage() {
   return (
     <div id="articles-page">
       <div id="articles-list">
-        {articles?.length
-          ? articles.map((article, index) => (
-              <ArticleCard theme={theme} key={index} article={article} />
-            ))
-          : null}
+        <List itemLayout="vertical" size="large">
+          {articles?.length
+            ? [...articles, ...articles, ...articles].map((article, index) => (
+                <ArticleCard theme={theme} key={index} article={article} />
+              ))
+            : null}
+        </List>
       </div>
     </div>
   );

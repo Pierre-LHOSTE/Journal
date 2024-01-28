@@ -1,16 +1,16 @@
-import { Button, Form, Input, Modal } from "antd";
-import { useAppDispatch, useAppSelector } from "../../../store";
-import { closeLogin } from "../../../reducers/settingsSlice";
-import NameIcon from "./icons/NameIcon";
-import "./login-modal.scss";
-import PasswordIcon from "./icons/PasswordIcon";
-import { FormSubmitType } from "../../../types/loginModal";
-import { useLoginMutation } from "../../../reducers/authApi";
-import { useEffect } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
-import { openNotification } from "../../../reducers/NotificationSlice";
+import { Button, Form, Input, Modal } from "antd";
+import { useEffect } from "react";
 import { useCookies } from "react-cookie";
+import { openNotification } from "../../../reducers/NotificationSlice";
+import { useLoginMutation } from "../../../reducers/authApi";
 import { login as loginSlice, logout } from "../../../reducers/authSlice";
+import { closeLogin } from "../../../reducers/settingsSlice";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { FormSubmitType } from "../../../types/loginModal";
+import NameIcon from "./icons/NameIcon";
+import PasswordIcon from "./icons/PasswordIcon";
+import "./login-modal.scss";
 
 function LoginModal() {
   const [form] = Form.useForm();
